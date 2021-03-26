@@ -9,7 +9,7 @@ from collections import deque
 import random
 
 # create matrix
-n = 8
+n = 4
 p = 0.25
 #start = (0,0)
 #goal = (n-1, n-1)
@@ -29,12 +29,7 @@ numBlocks = math.ceil(n*n*p)
 print(numBlocks)
 matrix = np.zeros((n,n))
 
-
-
-
-
 cmap= m.colors.ListedColormap(colors)
-
 
 ## 6,12,13,14
 num_arr = []
@@ -60,7 +55,9 @@ while l < x:
 
 print(newmatrix)
 
-
+x = np.random.randint(0,n-1)
+y = np.random.randint(0,n-1)
+print("This is the target:",(x,y))
 
 
 #mpl.imshow(matrix,cmap='Greys',interpolation='nearest')
