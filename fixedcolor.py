@@ -9,7 +9,7 @@ from collections import deque
 import random
 
 # create matrix
-n = 4
+n = 50
 p = 0.25
 #start = (0,0)
 #goal = (n-1, n-1)
