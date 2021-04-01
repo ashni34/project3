@@ -85,13 +85,37 @@ for i in range(n):
     #for j in range(n):
         #flat
 
-print(newmatrix)       
-def open_cell(newmatrix, prob_matrix):
-    ## find maximum value in the matrix and open that 
-    #maximum = np.max(prob_matrix)
-    i= np.argmax(prob_matrix, axis = 0)[0]
-    j= np.argmax(prob_matrix, axis = 1)[0]
-    print("this is new", newmatrix[i,j])
+print(newmatrix) 
+
+ 
+
+        
+
+
+## if coordinate is visited equals 1 else equals 0
+visited = np.zeros((n,n))
+def open_cell(newmatrofix, prob_matrix):
+    tup_list = []  
+    for a in range(n):
+        for b in range(n):
+            if visited[a,b] != 1:
+                tup_list.append(((a,b), prob_matrix[a,b]))
+            else:
+                print("already visited")
+    tup_list.sort(key=lambda x: x[1], reverse = True)
+    
+    
+
+    
+    ## find maximum value in the mrix and open that 
+    i = tup_list[0][0][0]
+    j = tup_list[0][0][0]
+    print("printing i and j", i,j)
+    
+    visited[i,j] = 1
+    
+    #print(tup_list)
+    #print("this is new", newmatrix[i,j])
     if (newmatrix[i,j] == 2):
         prob_matrix[i,j] = prob_matrix[i,j] * .1
         curr = prob_matrix[i,j]
@@ -118,24 +142,25 @@ def open_cell(newmatrix, prob_matrix):
     
     ## normalize
     if tot != 1.0:
-        print("in here")
+        #print("in here")
         for a in range(n):
             for b in range(n):
                 prob_matrix[a,b] = float(prob_matrix[a,b]) / float(tot)
 
-    return i,j
+    #return i,j
 
 found = False
 x_val = 0
 y_val = 0
-while found != True:  
-    x_val, y_val = open_cell(newmatrix, prob_matrix)
+#print("this is found", found)
+while found == False:  
+    #x_val, y_val = open_cell(newmatrix, prob_matrix)
+    open_cell(newmatrix, prob_matrix)
     ## if equals target
     if (x_val == x and y_val ==y):
         found = True
-        
-        
-    
+        print("true found")
+   
     
 print(found, x_val, y_val)
 
