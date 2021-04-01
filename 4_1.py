@@ -9,6 +9,9 @@ from collections import deque
 import random
 
 n = 4
+colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
+              mpl.cm.binary(0.7)]
+cmap = m.colors.ListedColormap(colors)
 def create():
     # create matrix
     p = 0.25
@@ -23,10 +26,6 @@ def create():
     ## 0 = white -> flat
     ## .4 = gray -> hilly
     ## .7 = dark gray -> cave
-    colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
-              mpl.cm.binary(0.7)]
-
-    cmap = m.colors.ListedColormap(colors)
 
     newmatrix = np.zeros((n,n))
     numBlocks = math.ceil(n*n*p)
@@ -95,7 +94,8 @@ print(newmatrix)
 ## if coordinate is visited equals 1 else equals 0
 visited = np.zeros((n,n))
 def open_cell(newmatrofix, prob_matrix):
-    tup_list = []  
+    tup_list = [] 
+    print(tup_list)
     for a in range(n):
         for b in range(n):
             if visited[a,b] != 1:
@@ -108,30 +108,34 @@ def open_cell(newmatrofix, prob_matrix):
 
     
     ## find maximum value in the mrix and open that 
-    i = tup_list[0][0][0]
-    j = tup_list[0][0][0]
-    print("printing i and j", i,j)
+    i = tup_list[0][0]
+    #j = tup_list[0][0]
     
-    visited[i,j] = 1
+
+
+    print(tup_list)
+    
+    visited[i] = 1
+    #print(visited)
     
     #print(tup_list)
     #print("this is new", newmatrix[i,j])
-    if (newmatrix[i,j] == 2):
-        prob_matrix[i,j] = prob_matrix[i,j] * .1
-        curr = prob_matrix[i,j]
+    if (newmatrix[i] == 2):
+        prob_matrix[i] = prob_matrix[i] * .1
+        curr = prob_matrix[i]
     #forest
-    if (newmatrix[i,j] == 1):
-        prob_matrix[i,j] = prob_matrix[i,j] * .7
-        curr = prob_matrix[i,j]
+    if (newmatrix[i] == 1):
+        prob_matrix[i] = prob_matrix[i] * .7
+        curr = prob_matrix[i]
     #hilly 
-    if (newmatrix[i,j] == 3):
-        prob_matrix[i,j] = prob_matrix[i,j] * .3
-        curr = prob_matrix[i,j]
+    if (newmatrix[i] == 3):
+        prob_matrix[i] = prob_matrix[i] * .3
+        curr = prob_matrix[i]
     #cave 
     ## the zeros are a temp fix
-    if (newmatrix[i,j] == 4):
-        prob_matrix[i,j] = prob_matrix[i,j] * .9
-        curr = prob_matrix[i,j]
+    if (newmatrix[i] == 4):
+        prob_matrix[i] = prob_matrix[i] * .9
+        curr = prob_matrix[i]
     
     
     tot = 0
@@ -146,20 +150,22 @@ def open_cell(newmatrofix, prob_matrix):
         for a in range(n):
             for b in range(n):
                 prob_matrix[a,b] = float(prob_matrix[a,b]) / float(tot)
-
-    #return i,j
+    tup_list.clear()
+    return i
 
 found = False
 x_val = 0
 y_val = 0
 #print("this is found", found)
 while found == False:  
-    #x_val, y_val = open_cell(newmatrix, prob_matrix)
-    open_cell(newmatrix, prob_matrix)
+    x_val, y_val = open_cell(newmatrix, prob_matrix)
+    #open_cell(newmatrix, prob_matrix)
     ## if equals target
     if (x_val == x and y_val ==y):
         found = True
         print("true found")
+    else:
+        continue
    
     
 print(found, x_val, y_val)
