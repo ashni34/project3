@@ -120,7 +120,18 @@ def open_cell(newmatrix, prob_matrix, val):
         curr = prob_matrix[i,j]
     
     
-
+    tot = 0
+    ## add everything together
+    for a in range(n):
+        for b in range(n):
+            tot += prob_matrix[a,b]
+    
+    ## normalize
+    if tot != 1.0:
+        print("in here")
+        for a in range(n):
+            for b in range(n):
+                prob_matrix[a,b] = float(prob_matrix[a,b]) / float(tot)
 
 
 
