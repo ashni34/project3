@@ -8,7 +8,7 @@ import random
 from collections import deque
 import random
 
-n = 50
+n = 4
 def create():
     # create matrix
     p = 0.25
@@ -85,37 +85,27 @@ for i in range(n):
     #for j in range(n):
         #flat
 
-    
-            
-
-       
-## if target not found, normalize
-## The idea is that if you search a flat cell and its not the 
-## target, then finding the target becomes harder because the remaining cells 
-## have a higher false negative rate. 
-
-
-## find highest probability:
-
-def open_cell(newmatrix, prob_matrix, val):
+print(newmatrix)       
+def open_cell(newmatrix, prob_matrix):
     ## find maximum value in the matrix and open that 
     #maximum = np.max(prob_matrix)
-    i= np.argmax(prob_matrx, axis = 0)
-    j= np.argmax(prob_matrx, axis = 1)
-
-    if (newmatrx[i,j] == 2):
+    i= np.argmax(prob_matrix, axis = 0)[0]
+    j= np.argmax(prob_matrix, axis = 1)[0]
+    print("this is new", newmatrix[i,j])
+    if (newmatrix[i,j] == 2):
         prob_matrix[i,j] = prob_matrix[i,j] * .1
         curr = prob_matrix[i,j]
     #forest
-    if (newmatrx[i,j] == 1):
+    if (newmatrix[i,j] == 1):
         prob_matrix[i,j] = prob_matrix[i,j] * .7
         curr = prob_matrix[i,j]
     #hilly 
-    if (newmatrx[i,j] == 3):
+    if (newmatrix[i,j] == 3):
         prob_matrix[i,j] = prob_matrix[i,j] * .3
         curr = prob_matrix[i,j]
-    #cave   
-    if (newmatrx[i,j] == 4):
+    #cave 
+    ## the zeros are a temp fix
+    if (newmatrix[i,j] == 4):
         prob_matrix[i,j] = prob_matrix[i,j] * .9
         curr = prob_matrix[i,j]
     
@@ -132,6 +122,31 @@ def open_cell(newmatrix, prob_matrix, val):
         for a in range(n):
             for b in range(n):
                 prob_matrix[a,b] = float(prob_matrix[a,b]) / float(tot)
+
+    return i,j
+
+found = False
+x_val = 0
+y_val = 0
+while found != True:  
+    x_val, y_val = open_cell(newmatrix, prob_matrix)
+    ## if equals target
+    if (x_val == x and y_val ==y):
+        found = True
+        
+        
+    
+    
+print(found, x_val, y_val)
+
+       
+## if target not found, normalize
+## The idea is that if you search a flat cell and its not the 
+## target, then finding the target becomes harder because the remaining cells 
+## have a higher false negative rate. 
+
+
+## find highest probability:
 
 
 
