@@ -132,26 +132,34 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     print("original,  = ", prob_matrix[i])
     print("this is new matrix " , newmatrix[i])
     if (newmatrix[i] == 2):
-        prob_matrix[i] *= .1
+        #changed to 1-p
+        #prob_matrix[i] *= .1
+        prob_matrix[i] *= .9
         print("flat,  = ", prob_matrix[i])
         curr = prob_matrix[i]
         tup_list.append(((a,b), curr, ManhattanDistance(a, b, Coord1, Coord2)))
     #forest
     elif (newmatrix[i] == 1):
-        prob_matrix[i]  *= .7
+        #changed to 1-p
+        #prob_matrix[i]  *= .7
+        prob_matrix[i] *= .3
         print("firest,  = ", prob_matrix[i])
         curr = prob_matrix[i]
         tup_list.append(((a,b), curr, ManhattanDistance(a, b, Coord1, Coord2)))
     #hilly 
     elif (newmatrix[i] == 3):
-        prob_matrix[i] *=  .3
+        #changed to 1-p
+        #prob_matrix[i] *=  .3
+        prob_matrix[i] *= .7
         print("hill,  = ", prob_matrix[i])
         curr = prob_matrix[i]
         tup_list.append(((a,b), curr, ManhattanDistance(a, b, Coord1, Coord2)))
     #cave 
     ## the zeros are a temp fix
     elif (newmatrix[i] == 4):
-        prob_matrix[i] *= .9
+        #changed to 1-p
+        #prob_matrix[i] *= .9
+        prob_matrix[i] *= .1
         print("cave,  = ", prob_matrix[i])
         curr = prob_matrix[i]
         tup_list.append(((a,b), curr, ManhattanDistance(a, b, Coord1, Coord2)))
