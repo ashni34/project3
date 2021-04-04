@@ -31,6 +31,7 @@ def create():
     numBlocks = math.ceil(n*n*p)
     #print(numBlocks)
     matrix = np.zeros((n,n))
+    
 
     cmap= m.colors.ListedColormap(colors)
 
