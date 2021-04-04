@@ -124,23 +124,30 @@ def open_cell(newmatrofix, prob_matrix):
     print("original,  = ", prob_matrix[i])
     print("this is new matrix " , newmatrix[i])
     if (newmatrix[i] == 2):
-        prob_matrix[i] *= .1
+        #prob_matrix[i] *= .1
+        # changed to 1-p
+        prob_matrix[i] *= .9
         print("flat,  = ", prob_matrix[i])
         curr = prob_matrix[i]
     #forest
     elif (newmatrix[i] == 1):
-        prob_matrix[i]  *= .7
+        #prob_matrix[i]  *= .7
+        # changed to 1-p
+        prob_matrix[i]  *= .3
         print("firest,  = ", prob_matrix[i])
         curr = prob_matrix[i]
     #hilly 
     elif (newmatrix[i] == 3):
-        prob_matrix[i] *=  .3
+        #prob_matrix[i] *=  .3
+        #changed to 1-p
+        prob_matrix[i]  *= .7
         print("hill,  = ", prob_matrix[i])
         curr = prob_matrix[i]
     #cave 
     ## the zeros are a temp fix
     elif (newmatrix[i] == 4):
-        prob_matrix[i] *= .9
+        #prob_matrix[i] *= .9
+        prob_matrix[i] *= .1
         print("cave,  = ", prob_matrix[i])
         curr = prob_matrix[i]
     print("after method", prob_matrix)
