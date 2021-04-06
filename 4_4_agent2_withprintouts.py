@@ -8,7 +8,7 @@ import random
 from collections import deque
 import random
 
-n = 4
+n = 50
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
@@ -29,6 +29,7 @@ def create():
 
     newmatrix = np.zeros((n,n))
     numBlocks = math.ceil(n*n*p)
+    numBlocks = int(numBlocks)
     #print(numBlocks)
     matrix = np.zeros((n,n))
 
@@ -180,7 +181,8 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
         #print("in here")
         for a in range(n):
             for b in range(n):
-                prob_matrix[a,b] = float(prob_matrix[a,b]) / float(tot)
+                if tot!=0:
+                    prob_matrix[a,b] = float(prob_matrix[a,b]) / float(tot)
                 
     #print(tup_list)
     tup_list.clear()
@@ -192,6 +194,7 @@ y_val = 0
 #print("this is found", found)
 Coord1 = 0
 Coord2 = 0
+count =1
 while found == False:  
     x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
     #open_cell(newmatrix, prob_matrix)
@@ -202,10 +205,11 @@ while found == False:
     else:
         Coord1 = x_val
         Coord2 = y_val
+        count+=1
         continue
    
     
-print(found, x_val, y_val, "manhattan" + str(sum(manList)))
+print(found, x_val, y_val, "manhattan" + str(sum(manList) + count), str(newmatrix[x,y]))
 
        
 ## if target not found, normalize
