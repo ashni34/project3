@@ -1,3 +1,4 @@
+#advanced
 import numpy as np
 import queue
 import sys
@@ -8,7 +9,7 @@ import random
 from collections import deque
 import random
 
-n =50
+n =30
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
@@ -65,8 +66,7 @@ def create():
 newmatrix = create()
 x = np.random.randint(0,n-1)
 y = np.random.randint(0,n-1)
-x = 20
-y = 20
+
 print("This is the target:",(x,y))
 
 
@@ -123,18 +123,6 @@ def neighbors(arr, d, coordinate):
     if ((x < d) and (y-1)>=0):
         neighborList.append((x,y-1))
             
-    if ((x+1 <d and (y+1)<d)):
-        neighborList.append((x+1,y+1))
-            
-    if ((x+1 <d) and (y-1) >=0):
-        neighborList.append((x+1,y-1))
-
-
-    if ((x-1 >=0 and (y+1) <d)):
-        neighborList.append((x-1,y+1))
-            
-    if ((x-1 >=0) and (y-1) >=0):
-        neighborList.append((x-1,y-1))
 
     return neighborList
 
@@ -188,8 +176,6 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
         for b in range(n):
                 tup_list.append(((a,b), prob_matrix[a,b]))
                 tup_list.sort(key=lambda x: x[1], reverse = True)
-                #print("already visited")
-    #tup_list.sort(key=lambda x: x[1], reverse = True)
     
 
     ## find maximum value in the mrix and open that 
@@ -244,11 +230,12 @@ found = False
 x_val = 0
 y_val = 0
 #print("this is found", found)
-Coord1 = 0
-Coord2 = 0
+Coord1 = 15
+Coord2 = 15
 count = 1
 while found == False:  
     x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
+    ## dictionary of the false negative rates for each
     false_neg = {}
     false_neg[1] = .7
     false_neg[2] = .1
@@ -258,7 +245,7 @@ while found == False:
     chance = random.uniform(0,1)
     terrain = newmatrix[x_val, y_val]
     
-    if (terrain == .1) or (terrain == .3):
+    if (terrain == .7) or (terrain == .9):
         if (x_val == x and y_val ==y):
             if (chance > false_neg[terrain]):
                 count+=1
@@ -284,7 +271,7 @@ while found == False:
         continue
  
     
-
+print(manList)
 print(found, x_val, y_val, "Manhattan = " + str(sum(manList) + count), newmatrix[x, y])
 
        
@@ -299,6 +286,6 @@ print(found, x_val, y_val, "Manhattan = " + str(sum(manList) + count), newmatrix
 
 #mpl.imshow(matrix,cmap='Greys',interpolation='nearest')
 
-#print(matrix)
+#print(manL)
 mpl.imshow(newmatrix,cmap = cmap,interpolation='nearest')
 mpl.show()
