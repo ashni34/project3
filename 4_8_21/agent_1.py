@@ -8,7 +8,7 @@ import random
 from collections import deque
 import random
 
-n =30
+n =50
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
@@ -16,9 +16,9 @@ cmap = m.colors.ListedColormap(colors)
 
 def create():
     # create matrix
+    # create matrix of equal proportion of all terrains
     p = 0.25
-    #start = (0,0)
-    #goal = (n-1, n-1)
+
     greycounter = 0
     lightgreycounter = 0
     greencounter = 0
@@ -52,6 +52,7 @@ def create():
     counter = 0
     l=0
     x = n*n
+    ## loading new_matrix, the matrix that contains all of the terrain types
     while l < x:
         for i in range(n):
             for j in range(n):
@@ -62,6 +63,7 @@ def create():
     #print(newmatrix)
     return newmatrix
 
+  ## pick target value
 newmatrix = create()
 x = np.random.randint(0,n-1)
 y = np.random.randint(0,n-1)
@@ -89,13 +91,12 @@ for i in range(n):
 
 #print(newmatrix) 
 
- 
+# Manhattan Distance calculated
 def ManhattanDistance(a1,b1,a2,b2):
     total =  abs(a1 - a2) + abs(b1 - b2) 
     #print("1= ", a1, b1, "2=", a2,b2, total)
     return total
-## if coordinate is visited equals 1 else equals 0
-##Manhattan = 0
+
 
 def neighbors(arr, d, coordinate):
     neighborList= []
@@ -122,6 +123,8 @@ def neighbors(arr, d, coordinate):
 
     return neighborList
 
+  
+### method to update probabilites
 def calc_fn(newmatrix, Coord1, Coord2):
     if (newmatrix[Coord1, Coord2] == 2):
         #changed to 1-p
@@ -156,15 +159,18 @@ def calc_fn(newmatrix, Coord1, Coord2):
         curr = prob_matrix[Coord1, Coord2]
 
 manList = []
+
+## looking at the current cell
 def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     tup_list = [] 
     
+    
+    ## chooses what to look at based on probability
     for a in range(n):
         for b in range(n):
                 tup_list.append(((a,b), prob_matrix[a,b]))
     tup_list.sort(key=lambda x: x[1], reverse = True)
-                #print("already visited")
-    #tup_list.sort(key=lambda x: x[1], reverse = True)
+
    
     ## find maximum value in the mrix and open that 
     i = tup_list[0][0]
@@ -172,12 +178,16 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     ## check neighbors
     neighbor = neighbors(prob_matrix, n, i)
     
+    
+    ## sorts based off of probability and breaks any ties by choosing with lower Manhattan Distance using lambda expression
     check_n = []
     for neigh in neighbor:
         check_n.append((neigh, prob_matrix[neigh], ManhattanDistance(neigh[0], neigh[1], Coord1, Coord2)))
     check_n.append((i, prob_matrix[i], ManhattanDistance(i[0], i[1], Coord1, Coord2)))
     check_n.sort(key=lambda x: (-x[1], x[2]))
     
+    
+    ## out of the current cell and the neighbors decides what is best to go to
     i = check_n[0][0]
         
     
@@ -190,15 +200,7 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     
 
 
-   ## print(tup_list)
-    
-    #visited[i] = 1
-    #print(visited)
-    #print("before method", prob_matrix)
-    #print(tup_list)
-    #print("this is new", newmatrix[i,j])
-    #print("original,  = ", prob_matrix[i])
-    #print("this is new matrix " , newmatrix[i])
+
     
     
     tot = 0
@@ -226,6 +228,8 @@ y_val = 0
 Coord1 = random.randint(0,n-1)
 Coord2 = random.randint(0,n-1)
 count = 1
+
+## keep running loop till found
 while found == False:  
     x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
     false_neg = {}
@@ -234,6 +238,10 @@ while found == False:
     false_neg[3] = .3
     false_neg[4] = .9
     
+    
+    ## chance picks a random decimal value between 0 and 1 -> if greater than false negative rate, then the agent actually finds the target when looking in the correct target cell
+    ## otherwise will be a false negative
+    
     chance = random.uniform(0,1)
     terrain = newmatrix[x_val, y_val]
     #print(x_val, y_val)
@@ -241,6 +249,8 @@ while found == False:
         if (chance > false_neg[terrain]):
             found = True
             print("true found")
+            
+     ## set original value looked at to Coord1 and 2 and then continue to find next value
     else:
         Coord1 = x_val
         Coord2 = y_val
