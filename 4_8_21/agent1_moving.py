@@ -12,7 +12,8 @@ import random
 from collections import deque
 import random
 
-n =10
+n =30
+ran_5 =0
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
@@ -185,9 +186,11 @@ def calc_fn(newmatrix, Coord1, Coord2):
 manList = []
 
 
+ran_first_time = True
+
 def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     ran_5 = 0
-    if within_5 == False:
+    if within_5 == False and (ran_first_time == False):
         tup_list = []
         for a in range(n):
             for b in range(n):
@@ -207,7 +210,6 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     #tup_list.sort(key=lambda x: x[1], reverse = True)
    
     ## find maximum value in the mrix and open that 
-    i = tup_list[0][0]
     
     ## check neighbors
     neighbor = neighbors(prob_matrix, n, i)
@@ -253,15 +255,24 @@ found = False
 x_val = 0
 y_val = 0
 #print("this is found", found)
-Coord1 = np.random.randint(0,n-1)
-Coord2 = np.random.randint(0,n-1)
+Coord1 = 0
+Coord2 = 0
 count = 1
 within_5 = False
 
 within_5_list = []
 tup_list = []
 while found == False:  
-    x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
+    ran_first_time = False
+    if (ran_5 > 20):
+        print("program not likely to find target - EXIT")
+        break
+    coord_return = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
+    x_val = coord_return[0]
+    #print("this is the x val return", x_val)
+    y_val = coord_return[1]
+    #print("this is the y val return", y_val)
+    ## dictionary of the false negative rates for each
     false_neg = {}
     false_neg[1] = .7
     false_neg[2] = .1
@@ -322,6 +333,8 @@ print(found, x_val, y_val, "Manhattan = " + str(sum(manList) + count), newmatrix
 
 #mpl.imshow(matrix,cmap='Greys',interpolation='nearest')
 
+
 #print
 mpl.imshow(newmatrix,cmap = cmap,interpolation='nearest')
 mpl.show()
+
