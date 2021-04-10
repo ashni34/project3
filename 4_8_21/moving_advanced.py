@@ -1,5 +1,8 @@
 # moving target extra credit
 #advanced
+
+## this is the same code as the other advanced except with the small changes added for moving target
+## please refer to the other file for more details about the implementation
 import numpy as np
 import queue
 import sys
@@ -68,8 +71,6 @@ def create():
 newmatrix = create()
 x = np.random.randint(0,n-1)
 y = np.random.randint(0,n-1)
-x=0
-y=1
 
 print("This is the target:",(x,y))
 
@@ -133,6 +134,7 @@ def neighbors(arr, d, coordinate):
 
 
 def calc_fn(newmatrix, Coord1, Coord2):
+    #flat
     if (newmatrix[Coord1, Coord2] == 2):
         #changed to 1-p
         #prob_matrix[i] *= .1
@@ -283,6 +285,7 @@ within_5 = False
 within_5_list = []
 while found == False:  
     ran_first_time = False
+    ## exit if more than 5 away too many times
     if (ran_5 > 10):
         print("program not likely to find target - EXIT")
         break
@@ -328,6 +331,8 @@ while found == False:
         print("distance = ", distance)
         if (distance <= 5):
             within_5 = True
+            
+            ## append to list if within 5 manhattan distance away
             for u in range(6):
                     if (Coord1+u < n-1):
                         within_5_list.append((Coord1+u,Coord2))
