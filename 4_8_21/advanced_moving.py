@@ -1,4 +1,7 @@
-#advanced
+## extra credit
+
+#agent 1:
+
 import numpy as np
 import queue
 import sys
@@ -9,10 +12,11 @@ import random
 from collections import deque
 import random
 
-n =30
+n =10
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
+
 
 
 def create():
@@ -66,7 +70,6 @@ def create():
 newmatrix = create()
 x = np.random.randint(0,n-1)
 y = np.random.randint(0,n-1)
-
 print("This is the target:",(x,y))
 
 
@@ -91,7 +94,30 @@ for i in range(n):
 
 #print(newmatrix) 
 
- 
+def move_target(neighbors_list):
+    
+    index = np.random.randint(0, len(neighbors_list))
+    i = neighbors_list[index]
+    
+    ## update the probability based on false negative rates
+    calc_fn(newmatrix, i[0], i[1])
+    
+    
+    ## add everything together and check if needs to be normalized
+    tot= 0
+    for a in range(n):
+        for b in range(n):
+            tot += prob_matrix[a,b]
+    
+    ## normalize
+    if tot != 1.0:
+        for a in range(n):
+            for b in range(n):
+                if tot != 0:
+                    prob_matrix[a,b] = float(prob_matrix[a,b]) / (float(tot))
+    
+    return i[0], i[1]
+    
 def ManhattanDistance(a1,b1,a2,b2):
     total =  abs(a1 - a2) + abs(b1 - b2) 
     #print("1= ", a1, b1, "2=", a2,b2, total)
@@ -108,8 +134,6 @@ def neighbors(arr, d, coordinate):
     counter = int(0)
 
 
-    #in this neighbors list, we are expanding our reach and looking beyond the up,down,right left neighbors
-    #we are looking at direct neighbors and look at the probability of those 
     if ((x+1 < d and ((y)<d))):
         neighborList.append((x+1,y))
         
@@ -122,11 +146,8 @@ def neighbors(arr, d, coordinate):
 
     if ((x < d) and (y-1)>=0):
         neighborList.append((x,y-1))
-            
 
     return neighborList
-
-
 
 def calc_fn(newmatrix, Coord1, Coord2):
     if (newmatrix[Coord1, Coord2] == 2):
@@ -160,42 +181,34 @@ def calc_fn(newmatrix, Coord1, Coord2):
         prob_matrix[Coord1, Coord2] *= .1
         #print("cave,  = ", prob_matrix[Coord1, Coord2])
         curr = prob_matrix[Coord1, Coord2]
-        #tup_list.append(((a,b), curr, ManhattanDistance(a, b, Coord1, Coord2)))
-    #print("after method", prob_matrix)
-    
+
 manList = []
 
-#open cell is a method to look a that the probability value and decides the current value to look at 
-#based on the probability matrix, our agent will decide where to go 
-def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
-    tup_list = [] 
-    
-    #we append coordinates and probaility to a list 
-    #this will later determine what has the highest chance of containing the target
-    for a in range(n):
-        for b in range(n):
-                tup_list.append(((a,b), prob_matrix[a,b]))
-                tup_list.sort(key=lambda x: x[1], reverse = True)
-    
 
+def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
+    if within_5 == False:
+        tup_list = []
+        for a in range(n):
+            for b in range(n):
+                tup_list.append(((a,b), prob_matrix[a,b]))
+        tup_list.sort(key=lambda x: x[1], reverse = True)
+        
+    else:
+        tup_list = within_5_list
+                #print("already visited")
+    #tup_list.sort(key=lambda x: x[1], reverse = True)
+   
     ## find maximum value in the mrix and open that 
     i = tup_list[0][0]
     
     ## check neighbors
-    neighbor1 = neighbors(prob_matrix, n, i)
+    neighbor = neighbors(prob_matrix, n, i)
     
-    #checking neighbors of neighbors to have a short distance 
-    #this will...
-    for q in neighbor1:
-        neighbor = neighbors(prob_matrix, n, q)
-    
-    
-    #...determine whether there is a better cell to visit, once going through the neighbors of neighbors
     check_n = []
     for neigh in neighbor:
         check_n.append((neigh, prob_matrix[neigh], ManhattanDistance(neigh[0], neigh[1], Coord1, Coord2)))
     check_n.append((i, prob_matrix[i], ManhattanDistance(i[0], i[1], Coord1, Coord2)))
-    check_n.sort(key=lambda x: (-x[2], x[1]))
+    check_n.sort(key=lambda x: (-x[1], x[2]))
     
     i = check_n[0][0]
         
@@ -207,6 +220,8 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     #print("current value", i)
     #j = tup_list[0][0]
     
+
+
     
     tot = 0
     ## add everything together
@@ -230,12 +245,15 @@ found = False
 x_val = 0
 y_val = 0
 #print("this is found", found)
-Coord1 = 15
-Coord2 = 15
+Coord1 = np.random.randint(0,n-1)
+Coord2 = np.random.randint(0,n-1)
 count = 1
+within_5 = False
+
+within_5_list = []
+tup_list = []
 while found == False:  
     x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
-    ## dictionary of the false negative rates for each
     false_neg = {}
     false_neg[1] = .7
     false_neg[2] = .1
@@ -244,18 +262,7 @@ while found == False:
     
     chance = random.uniform(0,1)
     terrain = newmatrix[x_val, y_val]
-    
-    if (terrain == .7) or (terrain == .9):
-        if (x_val == x and y_val ==y):
-            if (chance > false_neg[terrain]):
-                count+=1
-                found = True
-                print("true found")
-
-            else:
-                count+=1
-                chance = random.uniform(0,1)
-
+    #print("chance = ", chance,"terrain = ",  terrain)
     #print(x_val, y_val)
     if (x_val == x and y_val ==y):
         if (chance > false_neg[terrain]):
@@ -263,15 +270,31 @@ while found == False:
             found = True
             print("true found")
     else:
+        neighbors_list = neighbors(newmatrix, n, (x,y))
+        x,y = move_target(neighbors_list)
         Coord1 = x_val
         Coord2 = y_val
+        distance = ManhattanDistance(x,y,Coord1,Coord2)
+        #print(distance)
+        if (distance < 5):
+            within_5 = True
+            for u in range(6):
+                    while (Coord1+u < n-1):
+                        within_5_list.append((Coord1+u,Coord2))
+                    while(Coord1-u >= 0):
+                        within_5_list.append((Coord1-u,Coord2))
+                    while (Coord2+u < n-1):
+                        within_5_list.append((Coord1,Coord2+u))
+                    while(Coord2-u >= 0):
+                        within_5_list.append((Coord1,Coord2-u))
+            
         #print("coord = ", Coord1, Coord2)
         count+=1
         calc_fn(newmatrix, Coord1, Coord2)
         continue
- 
     
-print(manList)
+ 
+
 print(found, x_val, y_val, "Manhattan = " + str(sum(manList) + count), newmatrix[x, y])
 
        
@@ -284,8 +307,10 @@ print(found, x_val, y_val, "Manhattan = " + str(sum(manList) + count), newmatrix
 ## find highest probability:
 
 
+
 #mpl.imshow(matrix,cmap='Greys',interpolation='nearest')
 
-#print(manL)
+#print
 mpl.imshow(newmatrix,cmap = cmap,interpolation='nearest')
 mpl.show()
+
