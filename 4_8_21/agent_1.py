@@ -119,18 +119,6 @@ def neighbors(arr, d, coordinate):
     if ((x < d) and (y-1)>=0):
         neighborList.append((x,y-1))
             
-    if ((x+1 <d and (y+1)<d)):
-        neighborList.append((x+1,y+1))
-            
-    if ((x+1 <d) and (y-1) >=0):
-        neighborList.append((x+1,y-1))
-
-
-    if ((x-1 >=0 and (y+1) <d)):
-        neighborList.append((x-1,y+1))
-            
-    if ((x-1 >=0) and (y-1) >=0):
-        neighborList.append((x-1,y-1))
 
     return neighborList
 
