@@ -230,8 +230,8 @@ found = False
 x_val = 0
 y_val = 0
 #print("this is found", found)
-Coord1 = 15
-Coord2 = 15
+Coord1 = 25
+Coord2 = 25
 count = 1
 while found == False:  
     x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
