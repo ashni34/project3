@@ -223,18 +223,18 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
         #print("flat,  = ", prob_matrix[i])
         curr = prob_matrix[i]
         tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
-    #hilly
+    #forest
     elif (newmatrix[i] == 1):
         #changed to 1-p
         #prob_matrix[i]  *= .7
-        prob_matrix[i] *= .7
+        prob_matrix[i] *= .3
         curr = prob_matrix[i]
         tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
-    #forest
+    #hilly
     elif (newmatrix[i] == 3):
         #changed to 1-p
         #prob_matrix[i] *=  .3
-        prob_matrix[i] *= .3
+        prob_matrix[i] *= .7
         curr = prob_matrix[i]
         tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
     #cave 
