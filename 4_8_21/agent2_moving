@@ -11,13 +11,16 @@ from collections import deque
 from sklearn import preprocessing
 import random
 
-n = 50
+n = 7
 
 ## creating the map based on the following colors
 ## green is for forest, white is for flat, gray is for hilly, and dark gray is for cave
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
+
+global ran_5
+ran_5 = 0
 def create():
     # create matrix
     p = 0.25
@@ -82,7 +85,60 @@ for i in range(n):
         prob_matrix[i,j] = 1/(n*n)
 
 
+def move_target(neighbors_list):
+    
+    index = np.random.randint(0, len(neighbors_list))
+    i = neighbors_list[index]
+    
+    ## update the probability based on false negative rates
 
+    if (newmatrix[i] == 2):
+        #changed to 1-p
+        #prob_matrix[i] *= .1
+        prob_matrix[i] *= .9
+        #print("flat,  = ", prob_matrix[i])
+        curr = prob_matrix[i]
+        tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
+    #hilly
+    elif (newmatrix[i] == 1):
+        #changed to 1-p
+        #prob_matrix[i]  *= .7
+        prob_matrix[i] *= .7
+        curr = prob_matrix[i]
+        tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
+    #forest
+    elif (newmatrix[i] == 3):
+        #changed to 1-p
+        #prob_matrix[i] *=  .3
+        prob_matrix[i] *= .3
+        curr = prob_matrix[i]
+        tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
+    #cave 
+    ## the zeros are a temp fix
+    elif (newmatrix[i] == 4):
+        #changed to 1-p
+        #prob_matrix[i] *= .9
+        prob_matrix[i] *= .1
+        #print("cave,  = ", prob_matrix[i])
+        curr = prob_matrix[i]
+        tup_list.append(((i[0], i[1]), curr, ManhattanDistance(i[0], i[1], Coord1, Coord2)))
+    #print("after method", prob_matrix)
+    
+    
+    ## add everything together and check if needs to be normalized
+    tot= 0
+    for a in range(n):
+        for b in range(n):
+            tot += prob_matrix[a,b]
+    
+    ## normalize
+    if tot != 1.0:
+        for a in range(n):
+            for b in range(n):
+                if tot != 0:
+                    prob_matrix[a,b] = float(prob_matrix[a,b]) / (float(tot))
+    
+    return i[0], i[1]
 
 def neighbors(arr, d, coordinate):
     neighborList= []
@@ -120,18 +176,23 @@ def ManhattanDistance(a1,b1,a2,b2):
 ## we output the total sum of this
 manList = []
 def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
-    
-    if within_5 == False:
+    ran_5 = 0
+    if within_5 == False and (ran_first_time == False):
         tup_list = []
         for a in range(n):
             for b in range(n):
                 tup_list.append(((a,b), prob_matrix[a,b]))
         tup_list.sort(key=lambda x: x[1], reverse = True)
+        i = tup_list[0][0]
         
-                #print("already visited")
-    #tup_list.sort(key=lambda x: x[1], reverse = True)  
-    ## find maximum value in the mrix and open that 
-    i = tup_list[0][0]
+    else:
+        ran_5+=1
+        tup_list = within_5_list
+        if (len(within_5_list) > 0):
+            i = tup_list[0]
+        else:
+            sys.exit()
+        i = tup_list[0]
     ## calculate Manhattan
     #print("current value", i)
     #j = tup_list[0][0]
@@ -220,19 +281,32 @@ count =1
     ## 0 = white -> flat
     ## .4 = gray -> hilly
     ## .7 = dark gray -> cave
+    
+within_5 = False
+
+within_5_list = []
+tup_list = []
 while found == False:  
-    x_val, y_val = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
-    #open_cell(newmatrix, prob_matrix)
-    ## if equals target
+    ran_first_time = False
+    if (ran_5 > 20):
+        print("program not likely to find target - EXIT")
+        break
+    coord_return = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
+    x_val = coord_return[0]
+    #print("this is the x val return", x_val)
+    y_val = coord_return[1]
+    #print("this is the y val return", y_val)
+    ## dictionary of the false negative rates for each
     false_neg = {}
-    false_neg[1] = .3
+    false_neg[1] = .7
     false_neg[2] = .1
-    false_neg[3] = .7
+    false_neg[3] = .3
     false_neg[4] = .9
     
     chance = random.uniform(0,1)
     terrain = newmatrix[x_val, y_val]
     #print("chance = ", chance,"terrain = ",  terrain)
+    #print(x_val, y_val)
     if (x_val == x and y_val ==y):
         if (chance > false_neg[terrain]):
             count+=1
@@ -248,20 +322,21 @@ while found == False:
         if (distance < 5):
             within_5 = True
             for u in range(6):
-                    while (Coord1+u < n-1):
+                    if (Coord1+u < n-1):
                         within_5_list.append((Coord1+u,Coord2))
-                    while(Coord1-u >= 0):
+                    if (Coord1-u >= 0):
                         within_5_list.append((Coord1-u,Coord2))
-                    while (Coord2+u < n-1):
+                    if (Coord2+u < n-1):
                         within_5_list.append((Coord1,Coord2+u))
-                    while(Coord2-u >= 0):
+                    if (Coord2-u >= 0):
                         within_5_list.append((Coord1,Coord2-u))
             
         #print("coord = ", Coord1, Coord2)
-        count+=1
-        calc_fn(newmatrix, Coord1, Coord2)
-        continue
-
+            count+=1
+            
+        else:
+            count+=1
+            
 print(found, x_val, y_val, "manhattan = " + str(sum(manList) + count), str(newmatrix[x,y]))
 
        
