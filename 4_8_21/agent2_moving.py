@@ -1,5 +1,9 @@
 # extra  credit
 #agent2
+
+
+### this is the same code  as as the agent 2 also submitted just with the changes for the moving target
+## please refer to that code for more details about the specifics of the implementation
 import numpy as np
 import queue
 import sys
@@ -11,7 +15,7 @@ from collections import deque
 from sklearn import preprocessing
 import random
 
-n = 7
+n = 10
 
 ## creating the map based on the following colors
 ## green is for forest, white is for flat, gray is for hilly, and dark gray is for cave
@@ -85,6 +89,7 @@ for i in range(n):
         prob_matrix[i,j] = 1/(n*n)
 
 
+## move the actual target to a neighbor
 def move_target(neighbors_list):
     
     index = np.random.randint(0, len(neighbors_list))
@@ -210,14 +215,7 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     manList.append(ManhattanDistance(i[0], i[1], Coord1, Coord2))
 
    ## print(tup_list)
-    
-    #visited[i] = 1
-    #print(visited)
-    #print("before method", prob_matrix)
-    #print(tup_list)
-    #print("this is new", newmatrix[i,j])
-    #print("original,  = ", prob_matrix[i])
-    #print("this is new matrix " , newmatrix[i])
+    # flat
     if (newmatrix[i] == 2):
         #changed to 1-p
         #prob_matrix[i] *= .1
@@ -286,9 +284,11 @@ within_5 = False
 
 within_5_list = []
 tup_list = []
+
 while found == False:  
     ran_first_time = False
-    if (ran_5 > 20):
+    ## exit if away from 5 too many times
+    if (ran_5 > 10):
         print("program not likely to find target - EXIT")
         break
     coord_return = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
@@ -319,6 +319,7 @@ while found == False:
         Coord2 = y_val
         distance = ManhattanDistance(x,y,Coord1,Coord2)
         #print(distance)
+        ## if within range, append to the within_5_list and iterate through that when going through method again
         if (distance < 5):
             within_5 = True
             for u in range(6):
