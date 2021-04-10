@@ -186,15 +186,23 @@ manList = []
 
 
 def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
+    ran_5 = 0
     if within_5 == False:
         tup_list = []
         for a in range(n):
             for b in range(n):
                 tup_list.append(((a,b), prob_matrix[a,b]))
         tup_list.sort(key=lambda x: x[1], reverse = True)
+        i = tup_list[0][0]
         
     else:
+        ran_5+=1
         tup_list = within_5_list
+        if (len(within_5_list) > 0):
+            i = tup_list[0]
+        else:
+            sys.exit()
+        i = tup_list[0]
                 #print("already visited")
     #tup_list.sort(key=lambda x: x[1], reverse = True)
    
@@ -279,19 +287,23 @@ while found == False:
         if (distance < 5):
             within_5 = True
             for u in range(6):
-                    while (Coord1+u < n-1):
+                    if (Coord1+u < n-1):
                         within_5_list.append((Coord1+u,Coord2))
-                    while(Coord1-u >= 0):
+                    if (Coord1-u >= 0):
                         within_5_list.append((Coord1-u,Coord2))
-                    while (Coord2+u < n-1):
+                    if (Coord2+u < n-1):
                         within_5_list.append((Coord1,Coord2+u))
-                    while(Coord2-u >= 0):
+                    if (Coord2-u >= 0):
                         within_5_list.append((Coord1,Coord2-u))
             
         #print("coord = ", Coord1, Coord2)
-        count+=1
-        calc_fn(newmatrix, Coord1, Coord2)
-        continue
+            count+=1
+            calc_fn(newmatrix, Coord1, Coord2)
+            
+        else:
+            count+=1
+            calc_fn(newmatrix, Coord1, Coord2)
+        
     
  
 
@@ -313,4 +325,3 @@ print(found, x_val, y_val, "Manhattan = " + str(sum(manList) + count), newmatrix
 #print
 mpl.imshow(newmatrix,cmap = cmap,interpolation='nearest')
 mpl.show()
-
