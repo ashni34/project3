@@ -1,3 +1,4 @@
+#agent2
 import numpy as np
 import queue
 import sys
@@ -10,33 +11,29 @@ from sklearn import preprocessing
 import random
 
 n = 50
+
+## creating the map based on the following colors
+## green is for forest, white is for flat, gray is for hilly, and dark gray is for cave
 colors = [mpl.cm.ocean(1),mpl.cm.binary(0),mpl.cm.binary(0.4),
               mpl.cm.binary(0.7)]
 cmap = m.colors.ListedColormap(colors)
 def create():
     # create matrix
     p = 0.25
-    #start = (0,0)
-    #goal = (n-1, n-1)
+
+    ### making the grid so that there are 25% of each cell
     greycounter = 0
     lightgreycounter = 0
     greencounter = 0
     blackcounter = 0
 
-    ## 1= green -> forest
-    ## 0 = white -> flat
-    ## .4 = gray -> hilly
-    ## .7 = dark gray -> cave
-
     newmatrix = np.zeros((n,n))
     numBlocks = math.ceil(n*n*p)
     numBlocks = int(numBlocks)
-    #print(numBlocks)
     matrix = np.zeros((n,n))
 
     cmap= m.colors.ListedColormap(colors)
 
-    ## 6,12,13,14
     num_arr = []
     for i in range(numBlocks):
         num_arr.append(1)
@@ -44,31 +41,36 @@ def create():
         num_arr.append(3)
         num_arr.append(4)
 
-    #print(num_arr)
-    random.shuffle(num_arr)
-    #print(num_arr)
 
+    ## randomly shuffling so that the distribution is random each time we run it
+    random.shuffle(num_arr)
+
+
+    
+    ### creating "newmatrix" which refers to all of the terrains, and each terrain is represented using numerical values:
+    ### flat =2.0
+    ### hilly = 1.0
+    ### forest = 3.0
+    ### cave = 4.0
     counter = 0
     l=0
     x = n*n
     while l < x:
         for i in range(n):
             for j in range(n):
-                #print("l value = ", l, "n value", i,j)
                 newmatrix[i,j] = num_arr[l]
                 l+=1
 
-    #print(newmatrix)
     return newmatrix
 
 newmatrix = create()
+
+## randomly assigning the target
 x = np.random.randint(0,n-1)
 y = np.random.randint(0,n-1)
 print("This is the target:",(x,y))
 
 
-
-#### using Bayes theorem
 
 ## go through the array and set probability to 1/(total number of cells)
 prob_matrix = np.zeros((n,n))
@@ -78,20 +80,14 @@ for i in range(n):
     for j in range(n):
         prob_matrix[i,j] = 1/(n*n)
 
-    ## 1= green -> forest  =====> .7
-    ## 2 = white -> flat ====> .1
-    ## 3 = gray -> hilly =====> .3
-    ## 4 = dark gray -> cave ===> .9
-#for i in range(n):
-    #for j in range(n):
-        #flat
 
-#print(newmatrix) 
+
 
 def neighbors(arr, d, coordinate):
     neighborList= []
 #The following method is to check the neighbors of a given path
-#The possible neighbors are right,left,up,down,upper right,upper left,lower right,lower,left
+#The possible neighbors are right,left,up,down
+### used when deciding whether to search current cell or any of its 4 neighbors
     x = int(coordinate[0])
     y = int(coordinate[1])
     counter = int(0)
@@ -100,7 +96,6 @@ def neighbors(arr, d, coordinate):
     if ((x+1 < d and ((y)<d))):
         neighborList.append((x+1,y))
         
-
     if ((x-1>=0 and y<d)):
         neighborList.append((x-1,y))
 
@@ -112,16 +107,16 @@ def neighbors(arr, d, coordinate):
 
     return neighborList
 
- 
+
+## calculate manhattan distance between 2 points
 def ManhattanDistance(a1,b1,a2,b2):
     total =  abs(a1 - a2) + abs(b1 - b2) 
-    #print("1= ", a1, b1, "2=", a2,b2, total)
     return total
 
 
-## if coordinate is visited equals 1 else equals 0
-visited = np.zeros((n,n))
-##Manhattan = 0
+
+## list containing all manhattan distances calculated based on cells searched
+## we output the total sum of this
 manList = []
 def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     tup_list = [] 
@@ -129,7 +124,7 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     for a in range(n):
         for b in range(n):
             tup_list.append(((a,b), prob_matrix[a,b]))
-            tup_list.sort(key=lambda x: -x[1])
+    tup_list.sort(key=lambda x: x[1], reverse= True)
         
                 #print("already visited")
     #tup_list.sort(key=lambda x: x[1], reverse = True)  
@@ -148,7 +143,7 @@ def open_cell(newmatrofix, prob_matrix,Coord1,Coord2):
     check_n.append((i, prob_matrix[i], ManhattanDistance(i[0], i[1], Coord1, Coord2)))
     check_n.sort(key=lambda x: (-x[1], x[2]))
     
-    
+    i= check_n[0][0]
     manList.append(ManhattanDistance(i[0], i[1], Coord1, Coord2))
 
    ## print(tup_list)
@@ -218,8 +213,8 @@ found = False
 x_val = 0
 y_val = 0
 #print("this is found", found)
-Coord1 = 0
-Coord2 = 0
+Coord1 = np.random.randint(n-1)
+Coord2 = np.random.randint(n-1)
 count =1
  ## 1= green -> forest
     ## 0 = white -> flat
@@ -240,14 +235,14 @@ while found == False:
     if (x_val == x and y_val ==y):
         if (chance > false_neg[terrain]):
             found = True
+            count+=1
             print("true found")
     else:
         Coord1 = x_val
         Coord2 = y_val
         count+=1
         continue
-   
-    
+
 print(found, x_val, y_val, "manhattan" + str(sum(manList) + count), str(newmatrix[x,y]))
 
        
@@ -258,11 +253,6 @@ print(found, x_val, y_val, "manhattan" + str(sum(manList) + count), str(newmatri
 
 
 ## find highest probability:
-
-
-
-#mpl.imshow(matrix,cmap='Greys',interpolation='nearest')
-
-#print(matrix)
-#mpl.imshow(newmatrix,cmap = cmap,interpolation='nearest')
-#mpl.show()
+print(manList)
+mpl.imshow(newmatrix,cmap = cmap,interpolation='nearest')
+mpl.show()
