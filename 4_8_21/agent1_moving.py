@@ -2,6 +2,10 @@
 
 #agent 1:
 
+## this is the same implementation of agent 1 that is also being submitted, just with the addition of changes for the moving target
+## for more detailed comments please refer to that file
+
+
 import numpy as np
 import queue
 import sys
@@ -75,7 +79,7 @@ print("This is the target:",(x,y))
 
 
 
-#### using Bayes theorem
+
 
 ## go through the array and set probability to 1/(total number of cells)
 prob_matrix = np.zeros((n,n))
@@ -95,6 +99,8 @@ for i in range(n):
 
 #print(newmatrix) 
 
+
+### to actually make the target move
 def move_target(neighbors_list):
     
     index = np.random.randint(0, len(neighbors_list))
@@ -258,13 +264,16 @@ y_val = 0
 Coord1 = 0
 Coord2 = 0
 count = 1
+
+## places to store the values that are within 5 distance away
 within_5 = False
 
 within_5_list = []
 tup_list = []
 while found == False:  
     ran_first_time = False
-    if (ran_5 > 20):
+    ## exit from code if distance is greater than 5 more than 10 times as likely to not find after that
+    if (ran_5 > 10):
         print("program not likely to find target - EXIT")
         break
     coord_return = open_cell(newmatrix, prob_matrix,Coord1, Coord2)
@@ -297,6 +306,8 @@ while found == False:
         #print(distance)
         if (distance < 5):
             within_5 = True
+            
+            ## append to specific list to iterate through if distance under 5
             for u in range(6):
                     if (Coord1+u < n-1):
                         within_5_list.append((Coord1+u,Coord2))
