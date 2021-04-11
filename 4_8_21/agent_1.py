@@ -101,7 +101,7 @@ def ManhattanDistance(a1,b1,a2,b2):
 def neighbors(arr, d, coordinate):
     neighborList= []
 #The following method is to check the neighbors of a given path
-#The possible neighbors are right,left,up,down,upper right,upper left,lower right,lower,left
+#The possible neighbors are right,left,up,down
     x = int(coordinate[0])
     y = int(coordinate[1])
     counter = int(0)
@@ -126,6 +126,7 @@ def neighbors(arr, d, coordinate):
   
 ### method to update probabilites
 def calc_fn(newmatrix, Coord1, Coord2):
+  #flat
     if (newmatrix[Coord1, Coord2] == 2):
         #changed to 1-p
         #prob_matrix[i] *= .1
